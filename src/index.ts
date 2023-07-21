@@ -15,7 +15,7 @@ function next<I, R>(i: number, stages: Stage<I, R>[]): Next<I, R> {
 }
 
 
-export default <I, R>(...stages: [Stage<I, R>, ...Stage<I, R>[]]) => {
+export default <I, R>(...stages: Stage<I, R>[]) => {
     return next(0, stages);
 };
 export { Stage, Next };
