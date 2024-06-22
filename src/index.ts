@@ -8,18 +8,18 @@ class Pipeline<I, R> {
 
 
     constructor(stages: Stage<I, R>[] = []) {
-        this.add(stages);
+        for (let i = 0, n = stages.length; i < n; i++) {
+            this.add(stages[i]);
+        }
     }
 
 
-    add(stages: Stage<I, R>[]) {
-        let total = this.stages.length;
+    add(stage: Stage<I, R>) {
+        let n = this.stages.length + 1;
 
-        for (let i = 0, n = stages.length; i < n; i++) {
-            this.stages.push(
-                (input) => stages[total + i](input, this.stages[total + i + 1] || error)
-            );
-        }
+        this.stages.push(
+            (input) => stage(input, this.stages[n] || error)
+        );
 
         return this;
     }
