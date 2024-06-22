@@ -1,9 +1,6 @@
 import { Next, Stage } from './types';
-
-
-function error(): never {
-    throw new Error('Pipeline: final stage did not return a value');
-}
+import error from './error';
+import next from './next';
 
 
 export default <I, R>(...fns: Stage<I, R>[]) => {
@@ -17,4 +14,5 @@ export default <I, R>(...fns: Stage<I, R>[]) => {
 
     return stages[0];
 };
+export { next };
 export { Stage, Next };
