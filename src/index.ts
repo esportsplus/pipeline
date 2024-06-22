@@ -3,16 +3,35 @@ import error from './error';
 import next from './next';
 
 
-export default <I, R>(...fns: Stage<I, R>[]) => {
-    let stages: Next<I, R>[] = [];
+class Pipeline<I, R> {
+    private stages: Next<I, R>[] = [];
 
-    for (let i = 0, n = fns.length; i < n; i++) {
-        stages.push(
-            (input) => fns[i](input, stages[i + 1] || error)
-        );
+
+    constructor(stages: Stage<I, R>[] = []) {
+        this.add(stages);
     }
 
-    return stages[0];
+
+    add(stages: Stage<I, R>[]) {
+        let total = this.stages.length;
+
+        for (let i = 0, n = stages.length; i < n; i++) {
+            this.stages.push(
+                (input) => stages[total + i](input, this.stages[total + i + 1] || error)
+            );
+        }
+
+        return this;
+    }
+
+    dispatch(input: I) {
+        return this.stages[0](input);
+    }
+}
+
+
+export default <I, R>(...stages: Stage<I, R>[]) => {
+    return new Pipeline(stages);
 };
 export { next };
 export { Stage, Next };
