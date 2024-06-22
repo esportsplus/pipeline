@@ -30,7 +30,7 @@ class Pipeline<I, R> {
 }
 
 
-export default <I, R>(...stages: Stage<I, R>[]) => {
+export default <I, R>(stages: Stage<I, R>[] = []) => {
     return new Pipeline(stages);
 };
 export { next };
