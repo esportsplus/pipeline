@@ -34,4 +34,4 @@ export default <I, R>(stages: Stage<I, R>[] = []) => {
     return new Pipeline(stages);
 };
 export { next };
-export { Stage, Next };
+export { Pipeline, Stage, Next };
