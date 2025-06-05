@@ -1,4 +1,4 @@
-import { Next, Stage } from './types';
+import type { Next, Stage } from './types';
 import error from './error';
 import next from './next';
 
