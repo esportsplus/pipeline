@@ -1,10 +1,10 @@
 import type { Next, Stage } from './types';
 import error from './error';
-import next from './next';
 
 
 class Pipeline<I, R> {
-    private stages: Next<I, R>[] = [];
+    private chain: Next<I, R> | null = null;
+    private stages: Stage<I, R>[] = [];
 
 
     constructor(stages: Stage<I, R>[] = []) {
@@ -14,18 +14,32 @@ class Pipeline<I, R> {
     }
 
 
-    add(stage: Stage<I, R>) {
-        let n = this.stages.length + 1;
+    private build(): Next<I, R> {
+        let chain: Next<I, R> = error;
 
-        this.stages.push(
-            (input) => stage(input, this.stages[n] || error)
-        );
+        for (let i = this.stages.length - 1; i >= 0; i--) {
+            let stage = this.stages[i],
+                next = chain;
+
+            chain = (input) => stage(input, next);
+        }
+
+        return chain;
+    }
+
+    add(stage: Stage<I, R>) {
+        this.chain = null;
+        this.stages.push(stage);
 
         return this;
     }
 
     dispatch(input: I) {
-        return this.stages[0](input);
+        if (!this.chain) {
+            this.chain = this.build();
+        }
+
+        return this.chain(input);
     }
 }
 
@@ -33,5 +47,4 @@ class Pipeline<I, R> {
 export default <I, R>(stages: Stage<I, R>[] = []) => {
     return new Pipeline(stages);
 };
-export { next };
-export { Pipeline, Stage, Next };
+export type { Pipeline, Stage, Next };
